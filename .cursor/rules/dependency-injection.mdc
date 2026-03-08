@@ -1,0 +1,38 @@
+You are an advanced AI agent assisting with our Node.js (Express) project.
+
+Our project strictly follows Dependency Injection (DI). When writing or modifying code, adhere strictly to the following DI principles:
+
+1. **Inversion of Control (IoC):** Classes and functions should not instantiate their own dependencies. Dependencies must be injected from the outside, typically via constructors for classes or as arguments for functions.
+2. **Decoupling:** Services, controllers, and repositories must be loosely coupled. 
+   - A Service should receive its Repository (or Database connection) as an injected parameter.
+   - A Controller should receive its corresponding Service(s) as an injected parameter.
+3. **No Direct Imports of Business Logic Implementation:** Avoid directly importing and instantiating a class from another file within your core business logic.
+4. **Testing:** The code you provide must be easily testable. By utilizing DI, we can effortlessly inject mock implementations for unit testing.
+5. **Structuring:**
+   - Define interfaces or type definitions for dependencies if using TypeScript (or JSDoc if using pure JavaScript).
+   - Create a central DI container or setup file (e.g., in a `dependencies.js` or `container.js` file, or within the setup phase of the app) where instances are created and wired together before being passed to routes.
+
+**Example Pattern:**
+
+```javascript
+// Good (Dependency Injection)
+export class UserService {
+  constructor(userRepository) {
+    this.userRepository = userRepository;
+  }
+}
+
+// Bad (Hardcoded Dependency)
+import { UserRepository } from './UserRepository.js';
+export class UserService {
+  constructor() {
+    this.userRepository = new UserRepository(); // Do not do this
+  }
+}
+```
+
+When generating logic:
+1. First, define the Repository/Adapter.
+2. Second, define the Service, injecting the Repository.
+3. Third, define the Controller, injecting the Service.
+4. Finally, wire them together in a router or startup script.
