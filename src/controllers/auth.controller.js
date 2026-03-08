@@ -1,3 +1,5 @@
+import { UserDto } from '../dtos/user.dto.js'
+
 export class AuthController {
     constructor(authService) {
         this.authService = authService
@@ -12,7 +14,9 @@ export class AuthController {
             }
 
             const user = await this.authService.register(email, password, name)
-            res.status(201).json({ message: 'User registered successfully', user })
+
+            const userDto = UserDto.fromEntity(user)
+            res.status(201).json({ message: 'User registered successfully', user: userDto })
         } catch (error) {
             if (error.message === 'Email already in use') {
                 return res.status(409).json({ error: error.message })
@@ -30,7 +34,14 @@ export class AuthController {
             }
 
             const result = await this.authService.login(email, password)
-            res.status(200).json({ message: 'Login successful', ...result })
+
+            // result contains { user, session } or similar depending on the service
+            // we should be careful; assume result.user exists
+            const responseData = { ...result }
+            if (responseData.user) {
+                responseData.user = UserDto.fromEntity(responseData.user)
+            }
+            res.status(200).json({ message: 'Login successful', ...responseData })
         } catch (error) {
             if (error.message === 'Invalid email or password') {
                 return res.status(401).json({ error: error.message })
@@ -45,7 +56,9 @@ export class AuthController {
             const userId = req.user.userId
 
             const user = await this.authService.getProfile(userId)
-            res.status(200).json({ user })
+
+            const userDto = UserDto.fromEntity(user)
+            res.status(200).json({ user: userDto })
         } catch (error) {
             if (error.message === 'User not found') {
                 return res.status(404).json({ error: error.message })

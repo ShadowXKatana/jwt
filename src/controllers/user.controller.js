@@ -1,3 +1,5 @@
+import { UserDto } from '../dtos/user.dto.js'
+
 export class UserController {
     constructor(userService) {
         this.userService = userService
@@ -9,7 +11,10 @@ export class UserController {
             const userId = req.user.id
 
             const user = await this.userService.getProfile(userId)
-            res.status(200).json({ user })
+
+            // Map the DB model to a DTO
+            const userDto = UserDto.fromEntity(user)
+            res.status(200).json({ user: userDto })
         } catch (error) {
             console.error('[UserController] Error:', error)
             if (error.message === 'User not found') {
