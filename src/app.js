@@ -31,4 +31,8 @@ for (const file of routeFiles) {
     }
 }
 
+// Global Error Handler must be the last middleware
+import { errorHandler } from './middleware/error.middleware.js'
+app.use(errorHandler)
+
 export default app

@@ -1,3 +1,5 @@
+import { NotFoundError } from '../utils/errors.js'
+
 export class UserService {
     constructor(userRepository) {
         this.userRepository = userRepository
@@ -6,7 +8,7 @@ export class UserService {
     async getProfile(userId) {
         const user = await this.userRepository.findById(userId)
         if (!user) {
-            throw new Error('User not found')
+            throw new NotFoundError('User not found')
         }
         return user
     }

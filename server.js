@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import { errorHandler } from './src/middleware/error.middleware.js'
 import app from './src/app.js'
 
 const PORT = process.env.PORT || 3000
